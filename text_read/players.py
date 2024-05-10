@@ -16,3 +16,6 @@ class PlayerStatus:
 
     def get_name(self) -> str:
         return self.name
+
+    def get_info(self) -> str:
+        return f'name: {self.name}, bet: {self.bet}, fold_status: {self.fold_status}'
