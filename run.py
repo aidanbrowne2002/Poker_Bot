@@ -59,16 +59,13 @@ def check_turn() -> None:
             print(e)
             size = 0
 
-        if size > 4000 and size < 5000 and gather_on == False: # Need something to make it run onces
+        if size > 4000 and size < 5000 and not gather_on: # Need something to make it run onces
             gather_info()
             gather_on = True
-        elif size > 4000 and size < 5000 and gather_on == True:
+        elif size > 4000 and size < 5000 and gather_on:
             # Debug statement - could debug out
             pass
         elif size < 4000:
             gather_on = False
         else:
             print('ERROR: Is the virtual camera on? Is OBS on?')
-
-if __name__ == '__main__':
-    check_turn()
