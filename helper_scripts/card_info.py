@@ -116,4 +116,4 @@ def match_card(card_info, t_ranks, t_suits) -> tuple[str, str, int, int]:
     if best_suit_match_diff < 700:
         best_suit_match_name = best_suit_name
 
-    return best_rank_match_name, best_suit_match_name, best_rank_match_diff, best_suit_match_diff
+    return best_rank_match_name, best_suit_match_name

@@ -1,17 +1,22 @@
-import easyocr
-import text_read.player_bounderies as feed
-from text_read.players import PlayerStatus
 import cv2
+import easyocr
 from numpy import ndarray
 
+import text_read.player_bounderies as feed
+from text_read.players import Player as PlayerStatus
+
 class GameTable:
+    """
+    Class of the game
+    """
     def __init__(self) -> None:
         # Classes
         self.img = feed.Reader()
         self.player_dict: dict[PlayerStatus] = {}
 
         # Veriables
-        self.pot = None
+        self.pot = 0
+        self.cards = []
         self.bounderies = feed.BOUNDERIES
 
     def table_feed(self) -> None:
@@ -33,8 +38,7 @@ class GameTable:
                     try:
                         del self.player_dict[n]
                     except KeyError as e:
-                        print('{e}: Doesnt exist')
-                        pass
+                        print(f"{e}: Doesn't exist")
 
     def create_status(self, seat_name: str, box_bounderies: ndarray) -> PlayerStatus:
         """
@@ -58,7 +62,8 @@ class GameTable:
                     return player
 
                 else:
-                    player = PlayerStatus(player_name, bet) # MAYBE SOMETHING TODO WITH SENDING OLD PLAYER DATA TO SERVER BEFORE MAKING NEW ONE
+                    # MAYBE SOMETHING TODO WITH SENDING OLD PLAYER DATA TO SERVER BEFORE MAKING NEW ONE
+                    player = PlayerStatus(player_name, bet)
                     player.set_fold(fold)
                     return player
 
@@ -95,7 +100,7 @@ class GameTable:
 
     def is_folded(self, is_cards: tuple[int,int], area_bounderies: ndarray) -> bool:
         """
-        Checks if player as folded
+        Checks if player has folded
         """
         x, y = is_cards
 
@@ -107,14 +112,26 @@ class GameTable:
         return True
 
     def get_pot(self, box_bounderies: ndarray) -> int:
+        """
+        Gets the pot (int) of game
+        """
         reader = easyocr.Reader(['en'])
         result = reader.readtext(box_bounderies)
 
         return self.clean_bet(result[0][1])
 
     def clean_bet(self, bet: str) -> int:
+        """
+        Cleans the OCR visuals (str) of the bet into a int
+        """
         # Issue might arrise if it doesn't pick up the dollar sign
         bet = bet[1:]
         bet = ''.join(filter(str.isdigit, bet))
 
         return int(bet)/100
+
+    def player_count(self) -> int:
+        """
+        Returns numb of player in the game
+        """
+        return len(self.player_dict)
