@@ -1,49 +1,21 @@
 import random
 import time
 import matplotlib.pyplot as plt
-
-import text_read.ocr as player_feeds
-
 from icecream import ic
 
-# GAME_TABLE = player_feeds.GameTable()
+from text_read.players import Player, Me
 
 # Initial variable definition
 PLAYER_NUM = 6
 PEOPLE = []
 NAMES = ["Steve", "Alan", "Barry", "Pete", "Garry"]
 PRETTY_SUIT = {'C': '\u2667', 'D': '\u2662', 'H': '\u2661', 'S': '\u2664'}
-VALUE_DEF = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: "J", 11: "Q", 12: "K", 13: "A"}
-# global cards
+VALUE_DEF = {1: 2, 2: 3, 3: 4, 4: 5, 5: 6,
+             6: 7, 7: 8, 8: 9, 9: 10, 10: "J", 11: "Q", 12: "K", 13: "A"}
 CARDS = []
 
 PLAYERS_NAME = "Aidan"
-
-
-class Player:
-    def __init__(self, name, style):
-        self.name = name
-        self.style = style
-        self.cards = []
-        self.hand = None
-        self.hand_value = []
-        self.additional_cards = []
-        self.rank = None
-        self.folded = False
-
-    def is_main(self):
-        if hasattr(self, "main"):
-            return True
-        else:
-            return False
-
-
-class Me(Player):
-    def __init__(self, name, style):
-        Player.__init__(self, name, style)
-        self.main = True
-        self.wins = 0
-        self.ranks = []
+PEOPLE.append(Me(PLAYERS_NAME, 0))
 
 
 class Card:
@@ -71,19 +43,28 @@ def initialise() -> None:
     # return PEOPLE, CARDS
 
 
-def deal_hands() -> None:
+def deal_hands(cards, me_cards) -> None:
+    card_remove = [card for card in cards
+                   if (card.suit == me_cards[0][0] or card.suit == me_cards[1][0])
+                   and (card.value == me_cards[0][1] or card.value == me_cards[1][1])]
     for person in PEOPLE:
+        # if person.is_main():
+        #     for card in cards:
+        #         if (card.suit == "H" or card.suit == "D") and card.value == 13:
+        #             person.cards.append(card)
+        #             cards.remove(card)
+        #             print (len(cards))
+        #     print(len(person.cards))
+        #     print(person.cards[0].value, person.cards[0].suit)
+        #     ic(
+        #     f"{person.name} received:fire {VALUE_DEF[person.cards[0].value], PRETTY_SUIT[person.cards[0].suit]},"
+        #     f" {VALUE_DEF[person.cards[1].value], PRETTY_SUIT[person.cards[1].suit]}")
         if person.is_main():
-            for card in cards:
-                if (card.suit == "H" or card.suit == "D") and card.value == 13:
-                    person.cards.append(card)
-                    cards.remove(card)
-                    # print (len(car`ds))
-            # print(len(person.cards))
-            # print(person.cards[0].value, person.cards[0].suit)
-            # print(
-            # f"{person.name} received:fire {VALUE_DEF[person.cards[0].value], PRETTY_SI[person.cards[0].suit]},"
-            # f" {VALUE_DEF[person.cards[1].value], PRETTY_SI[person.cards[1].suit]}")
+            for card in card_remove:
+                person.cards.append(card)
+                cards.remove(card)
+
+
     for person in PEOPLE:
         if not person.is_main():
             for _ in range(0, 2):
@@ -96,20 +77,20 @@ def deal_hands() -> None:
             # f" {VALUE_DEF[person.cards[1].value], PRETTY_SI[person.cards[1].suit]}")
 
 
-def deal_card() -> None:
+def deal_card(game_table, cards) -> None:
     chosen_card = random.choice(cards)
-    GAME_TABLE.cards.append(chosen_card)
+    game_table.cards.append(chosen_card)
     cards.remove(chosen_card)  # Remove the chosen card from the deck
-    # print(f" {VALUE_DEF[GAME_TABLE.cards[-1].value], PRETTY_SI[GAME_TABLE.cards[-1].suit]}")
+    # print(f" {VALUE_DEF[game_table.cards[-1].value], PRETTY_SI[game_table.cards[-1].suit]}")
 
 
-def deal_flop() -> None:
+def deal_flop(game_table, cards) -> None:
     for _ in range(0, 3):
-        deal_card()
+        deal_card(game_table, cards)
 
 
-def check_hand(player) -> str:
-    cards = GAME_TABLE.cards + player.cards
+def check_hand(player, game_table) -> str:
+    cards = game_table.cards + player.cards
     flush_cards = []
     high_card = None
     flush_suit = None
@@ -204,7 +185,7 @@ def check_hand(player) -> str:
     return None
 
 
-def hand_ranking():
+def hand_ranking(player):
     if player.hand == "Royal Flush":
         player.rank = 1
     elif player.hand == "Straight Flush":
@@ -247,74 +228,72 @@ def player_ranking():
             ranked_players.append(player)
     return ranked_players
 
+def main():
+    initialise()
 
-PEOPLE.append(Me(PLAYERS_NAME, 0))
+    START_TIME = time.time()
+    for _ in range(0, 10000):
+        # print("reset")
+        for player in PEOPLE:
+            player.rank = None
+            player.hand_value = []
+            player.hand = None
+            player.cards = []
+        cards = []
+        for key, _ in PRETTY_SUIT.items():
+            for r in range(1, 14):
+                card = Card(key, r)
+                cards.append(card)
 
-initialise()
+        game_table = Table()
+        deal_hands(cards, [["H",13],["D",13]])
+        # print("Table:")
+        deal_flop(game_table, cards)
+        deal_card(game_table, cards)
+        deal_card(game_table, cards)
 
-START_TIME = time.time()
-for _ in range(0, 10000):
-    # print("reset")
-    for player in PEOPLE:
-        player.rank = None
-        player.hand_value = []
-        player.hand = None
-        player.cards = []
-    cards = []
-    for key, value in PRETTY_SUIT.items():
-        for x in range(1, 14):
-            card = Card(key, x)
-            # print("here")
-            cards.append(card)
+        for player in PEOPLE:
+            player.hand = check_hand(player, game_table)
 
-    GAME_TABLE = Table()
-    deal_hands()
-    # print("Table:")
-    deal_flop()
-    deal_card()
-    deal_card()
+            hand_ranking(player)
 
-    for player in PEOPLE:
-        player.hand = check_hand(player)
+        PEOPLE_RANK = player_ranking()
+        PREVIOUS_PLY = None
+        INDEX = 1
 
-        hand_ranking()
-
-    PEOPLE = player_ranking()
-    PREVIOUS_PLY = None
-    INDEX = 1
-
-    for player in PEOPLE:
-        if PREVIOUS_PLY:
-            if [player.hand, player.hand_value, player.additional_cards] != [PREVIOUS_PLY.hand,
-                                                                                PREVIOUS_PLY.hand_value,
-                                                                                PREVIOUS_PLY.additional_cards]:
-                INDEX += 1
-                player.rank = INDEX
+        for player in PEOPLE_RANK:
+            if PREVIOUS_PLY:
+                if [player.hand, player.hand_value, player.additional_cards] != [PREVIOUS_PLY.hand,
+                                                                                    PREVIOUS_PLY.hand_value,
+                                                                                    PREVIOUS_PLY.additional_cards]:
+                    INDEX += 1
+                    player.rank = INDEX
+                else:
+                    player.rank = INDEX
             else:
                 player.rank = INDEX
-        else:
-            player.rank = INDEX
-        PREVIOUS_PLY = player
-    for player in PEOPLE:
-        pass
-        # print(f"{player.name} Got a: {player.hand}, ranking: {player.rank}")
-    for player in PEOPLE:
+            PREVIOUS_PLY = player
+        # for player in PEOPLE_RANK:
+        #     pass
+        #     ic(f"{player.name} Got a: {player.hand}, ranking: {player.rank}")
+        for player in PEOPLE_RANK:
+            if player.name == "Aidan":
+                player.ranks.append(player.rank)
+                if player.rank == 1:
+                    player.wins += 1
+        # print (len(cards))
+
+    END_TIME = time.time()
+    TOTAL_TIME = END_TIME - START_TIME
+
+    for player in PEOPLE_RANK:
         if player.name == "Aidan":
-            player.ranks.append(player.rank)
-            if player.rank == 1:
-                player.wins += 1
-    # print (len(cards))
-
-END_TIME = time.time()
-TOTAL_TIME = END_TIME - START_TIME
-
-for player in PEOPLE:
-    if player.name == "Aidan":
-        rank_values = {i: player.ranks.count(i) for i in player.ranks}
-        rank_values = dict(sorted(rank_values.items(), reverse=True))
-        plt.bar(range(len(rank_values)), list(rank_values.values()), align='center')
-        plt.xticks(range(len(rank_values)), list(rank_values.keys()))
-        print(rank_values)
-        print(f"{player.wins / 100}%")
-        print("time taken to run 10000 games =", TOTAL_TIME)
-        plt.show()
+            rank_values = {i: player.ranks.count(i) for i in player.ranks}
+            rank_values = dict(sorted(rank_values.items(), reverse=True))
+            plt.bar(range(len(rank_values)), list(rank_values.values()), align='center')
+            plt.xticks(range(len(rank_values)), list(rank_values.keys()))
+            ic(rank_values)
+            ic(f"{player.wins / 100}%")
+            ic("time taken to run 10000 games =", TOTAL_TIME)
+            plt.show()
+main()
