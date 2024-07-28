@@ -24,8 +24,8 @@ class TrainSuits:
 def load_ranks(filepath) -> list[np.ndarray]:
     train_ranks: list[str] = []
 
-    for i, rank in enumerate(['ace','two','three','four','five','six','seven',
-                 'eight','nine','ten','jack','queen','king']):
+    for i, rank in enumerate(['two','three','four','five','six','seven',
+                 'eight','nine','ten','jack','queen','king','ace']):
         train_ranks.append(TrainRanks())
         train_ranks[i].name = rank
         filename: str = rank + '.jpg'

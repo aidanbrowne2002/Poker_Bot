@@ -58,7 +58,7 @@ def deal_hands(cards, me_cards) -> None:
         #     print(person.cards[0].value, person.cards[0].suit)
         #     ic(
         #     f"{person.name} received:fire {VALUE_DEF[person.cards[0].value], PRETTY_SUIT[person.cards[0].suit]},"
-        #     f" {VALUE_DEF[person.cards[1].value], PRETTY_SUIT[person.cards[1].suit]}")
+            # f" {VALUE_DEF[person.cards[1].value], PRETTY_SUIT[person.cards[1].suit]}")
         if person.is_main():
             for card in card_remove:
                 person.cards.append(card)
@@ -228,7 +228,7 @@ def player_ranking():
             ranked_players.append(player)
     return ranked_players
 
-def main():
+def main(main_ply_cards):
     initialise()
 
     START_TIME = time.time()
@@ -246,7 +246,7 @@ def main():
                 cards.append(card)
 
         game_table = Table()
-        deal_hands(cards, [["H",13],["D",13]])
+        deal_hands(cards, main_ply_cards)
         # print("Table:")
         deal_flop(game_table, cards)
         deal_card(game_table, cards)
@@ -290,10 +290,9 @@ def main():
         if player.name == "Aidan":
             rank_values = {i: player.ranks.count(i) for i in player.ranks}
             rank_values = dict(sorted(rank_values.items(), reverse=True))
-            plt.bar(range(len(rank_values)), list(rank_values.values()), align='center')
-            plt.xticks(range(len(rank_values)), list(rank_values.keys()))
+            # plt.bar(range(len(rank_values)), list(rank_values.values()), align='center')
+            # plt.xticks(range(len(rank_values)), list(rank_values.keys()))
             ic(rank_values)
             ic(f"{player.wins / 100}%")
             ic("time taken to run 10000 games =", TOTAL_TIME)
-            plt.show()
-main()
+            # plt.show()
