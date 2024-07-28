@@ -232,7 +232,7 @@ def main(main_ply_cards):
     initialise()
 
     START_TIME = time.time()
-    for _ in range(0, 10000):
+    for _ in range(0, 1000):
         # print("reset")
         for player in PEOPLE:
             player.rank = None
@@ -286,6 +286,7 @@ def main(main_ply_cards):
     END_TIME = time.time()
     TOTAL_TIME = END_TIME - START_TIME
 
+    print(len(PEOPLE_RANK))
     for player in PEOPLE_RANK:
         if player.name == "Aidan":
             rank_values = {i: player.ranks.count(i) for i in player.ranks}
@@ -294,5 +295,5 @@ def main(main_ply_cards):
             # plt.xticks(range(len(rank_values)), list(rank_values.keys()))
             ic(rank_values)
             ic(f"{player.wins / 100}%")
-            ic("time taken to run 10000 games =", TOTAL_TIME)
+            ic("time taken to run 1000 games =", TOTAL_TIME)
             # plt.show()

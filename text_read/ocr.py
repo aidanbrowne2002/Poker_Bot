@@ -48,24 +48,29 @@ class GameTable:
         # print(f'name: {player_name}, bet: {bet}, has_folded: {fold}')
 
         if player_name:
-            if seat_name not in self.player_dict: # Adds player if spot is empty
+            print(self.player_dict)
+            # Adds player if spot is empty
+            # If players name on the table isn't in the dictionary of player names
+            if seat_name not in self.player_dict:
                 player = PlayerStatus(player_name, bet)
                 player.set_fold(fold)
                 return player
 
+            # If Name is in player dictionary
+            # Changes status of the amount they have bet and also the fold status
             elif seat_name in self.player_dict:
                 old_player: PlayerStatus = self.player_dict[seat_name] # Gets class
 
                 if player_name == old_player.get_name(): # SET FOLD STATUS HERE
                     old_player.set_bet(bet)
                     old_player.set_fold(fold)
-                    return player
+                    return old_player
 
                 else:
                     # MAYBE SOMETHING TODO WITH SENDING OLD PLAYER DATA TO SERVER BEFORE MAKING NEW ONE
                     player = PlayerStatus(player_name, bet)
                     player.set_fold(fold)
-                    return player
+                    return old_player
 
         else:
             # SEND OLD PLAYER DATA TO DATABASE (If word is 'Empty')

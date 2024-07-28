@@ -70,8 +70,7 @@ def check_turn() -> None:
         # Incase theres nothing on screen
         try:
             size = cv2.contourArea(contours[0])
-        except IndexError as e:
-            # ic(e)
+        except IndexError:
             size = 0
 
         if size > 4000 and size < 5000 and not gather_on: # Need something to make it run onces
