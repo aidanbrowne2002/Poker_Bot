@@ -286,7 +286,6 @@ def main(main_ply_cards):
     END_TIME = time.time()
     TOTAL_TIME = END_TIME - START_TIME
 
-    print(len(PEOPLE_RANK))
     for player in PEOPLE_RANK:
         if player.name == "Aidan":
             rank_values = {i: player.ranks.count(i) for i in player.ranks}

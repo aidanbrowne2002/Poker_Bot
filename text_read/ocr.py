@@ -48,7 +48,6 @@ class GameTable:
         # print(f'name: {player_name}, bet: {bet}, has_folded: {fold}')
 
         if player_name:
-            print(self.player_dict)
             # Adds player if spot is empty
             # If players name on the table isn't in the dictionary of player names
             if seat_name not in self.player_dict:
